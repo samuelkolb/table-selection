@@ -70,7 +70,6 @@ var App = React.createClass({
             url: "feedback.html",
             data: { csv_data: Papa.unparse(this.state.data), tables_json: exportTables(this.state.tables) }
         }).done(function (msg) {
-            alert(msg);
             self.setState({ constraints: msg });
         });
     },
