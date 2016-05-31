@@ -33,6 +33,17 @@ function makeTextFile(text) {
     return textFile;
 }
 
+function learn(tables, data, e) {
+    $.ajax({
+        method: "POST",
+        url: "feedback.html",
+        data: { csv_data: Papa.unparse(data), tables_json: exportTables(tables) }
+    }).done(function (msg) {
+        alert("Data Saved: " + msg);
+    });
+    e.preventDefault();
+}
+
 var App = React.createClass({
     displayName: "App",
 
@@ -90,6 +101,18 @@ var App = React.createClass({
                     "a",
                     { href: makeTextFile(exportTables(this.state.tables)), download: "tables.csv" },
                     "Generate JSON"
+                ),
+                React.createElement(
+                    "span",
+                    null,
+                    " | "
+                ),
+                React.createElement(
+                    "a",
+                    { href: "", onClick: function (e) {
+                            learn(this.state.tables, this.state.data, e);
+                        }.bind(this) },
+                    "Learn constraints"
                 )
             ),
             React.createElement(
