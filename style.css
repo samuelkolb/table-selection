@@ -47,5 +47,9 @@ label {
 
 .content {
     position: absolute;
-    top: 50px;
+    top: 60px;
+}
+
+.constraints {
+    color: cadetblue;
 }

@@ -33,21 +33,9 @@ function makeTextFile(text) {
     return textFile;
 }
 
-function learn(tables, data, e) {
-    $.ajax({
-            method: "POST",
-            url: "feedback.html",
-            data: { csv_data: Papa.unparse(data), tables_json: exportTables(tables) }
-        })
-        .done(function( msg ) {
-            alert( "Data Saved: " + msg );
-        });
-    e.preventDefault();
-}
-
 var App = React.createClass({
     getInitialState: function() {
-        return {data: [], start: null, end: null, orientation: "none", tables: []};
+        return {data: [], start: null, end: null, orientation: "none", tables: [], constraints: ""};
     },
     update: function(state, callback) {
         this.setState(state, callback);
@@ -72,6 +60,18 @@ var App = React.createClass({
             reader.readAsText(file);
         }
     },
+    learn:function(event) {
+        event.preventDefault();
+        var self = this;
+        $.ajax({
+                method: "POST",
+                url: "feedback.html",
+                data: { csv_data: Papa.unparse(this.state.data), tables_json: exportTables(this.state.tables) }
+            }).done(function(msg) {
+                alert(msg);
+                self.setState({constraints: msg});
+            });
+    },
     render: function () {
         var or = function(or) {
             return function() {
@@ -94,9 +94,12 @@ var App = React.createClass({
                         <br />
                         <a href={makeTextFile(exportTables(this.state.tables))} download="tables.csv">Generate JSON</a>
                         <span> | </span>
-                        <a href="" onClick={function(e) {learn(this.state.tables, this.state.data, e)}.bind(this)}>Learn constraints</a>
+                        <a href="" onClick={this.learn}>Learn constraints</a>
                     </div>
                     <div className="content">
+                        <div className="constraints">
+                            {this.state.constraints}
+                        </div>
                         <Table data={this.state.data} state={this.state} setState={this.update} /><br />
                         <input type="file" onChange={this.import} /><br />
                     </div>
