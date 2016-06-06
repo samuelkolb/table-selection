@@ -37,7 +37,7 @@ var App = React.createClass({
     displayName: "App",
 
     getInitialState: function () {
-        return { data: [], start: null, end: null, orientation: "none", tables: [], constraints: "" };
+        return { data: [], start: null, end: null, orientation: "none", tables: [], constraints: null };
     },
     update: function (state, callback) {
         this.setState(state, callback);
@@ -73,7 +73,7 @@ var App = React.createClass({
             if (msg) {
                 self.setState({ constraints: msg });
             } else {
-                self.setState({ constraints: "No constraints found." });
+                self.setState({ constraints: [] });
             }
         });
     },
@@ -83,6 +83,19 @@ var App = React.createClass({
                 this.setOrientation(or);
             }.bind(this);
         }.bind(this);
+        var constraints = null;
+        if (this.state.constraints != null) {
+            constraints = [];
+            var input = $.parseJSON(this.state.constraints);
+            if (input.length > 0) {
+                for (var i = 0; i < input.length; i++) {
+                    constraints.push(input[i]);
+                    constraints.push(React.createElement("br", { key: i }));
+                }
+            } else {
+                constraints = "No constraints found.";
+            }
+        }
         return React.createElement(
             "div",
             { className: "full" },
@@ -123,7 +136,7 @@ var App = React.createClass({
                 React.createElement(
                     "div",
                     { className: "constraints" },
-                    this.state.constraints
+                    constraints
                 ),
                 React.createElement(Table, { data: this.state.data, state: this.state, setState: this.update }),
                 React.createElement("br", null),
